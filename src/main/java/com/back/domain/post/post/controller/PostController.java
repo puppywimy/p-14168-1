@@ -18,13 +18,11 @@ public class PostController {
     @ResponseBody
     public String write() {
         return """
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    <form action="doWrite">
-                        <input type="text" name="title" placeholder="제목" />
-                        <br />
-                        <textarea name="content" placeholder="내용"></textarea>
-                        <br />
-                        <input type="submit" value="작성" />
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%">
+                    <form action="doWrite" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
+                        <input type="text" name="title" placeholder="제목" style="height: 24px" />
+                        <textarea name="content" placeholder="내용" style="height: 96px; resize: none;" ></textarea>
+                        <input type="submit" value="작성" style="height: 24px" />
                     </form>
                 </div>
                 """;
