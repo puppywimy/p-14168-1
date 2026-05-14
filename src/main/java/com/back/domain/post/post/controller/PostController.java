@@ -16,20 +16,20 @@ public class PostController {
     private final PostService postService;
 
     private String getWriteFormHtml() {
-        return getWriteFormHtml("");
+        return getWriteFormHtml("", "", "");
     }
 
-    private String getWriteFormHtml(String errorMessage) {
+    private String getWriteFormHtml(String errorMessage, String title, String content) {
         return """
                 <div style="display: flex; flex-direction: column; row-gap: 4px; align-items: center; justify-content: center; height: 100%%">
                     <div style="color: #ff0000">%s</div>
                     <form action="doWrite" method="POST" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
-                        <input type="text" name="title" placeholder="제목" style="height: 24px" />
-                        <textarea name="content" placeholder="내용" style="height: 96px; resize: none;" ></textarea>
+                        <input type="text" name="title" placeholder="제목" value="%s" style="height: 24px" />
+                        <textarea name="content" placeholder="내용" style="height: 96px; resize: none;">%s</textarea>
                         <input type="submit" value="작성" style="height: 24px" />
                     </form>
                 </div>
-                """.formatted(errorMessage);
+                """.formatted(errorMessage, title, content);
     }
 
     @GetMapping("/posts/write")
@@ -45,8 +45,8 @@ public class PostController {
             @RequestParam(defaultValue = "") String title,
             @RequestParam(defaultValue = "") String content
     ) {
-        if (title.isBlank()) return getWriteFormHtml("제목을 입력해 주세요.");
-        if (content.isBlank()) return getWriteFormHtml("내용을 입력해 주세요.");
+        if (title.isBlank()) return getWriteFormHtml("제목을 입력해 주세요.", title, content);
+        if (content.isBlank()) return getWriteFormHtml("내용을 입력해 주세요.", title, content);
 
         Post post = postService.write(title, content);
 
