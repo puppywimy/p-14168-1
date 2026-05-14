@@ -15,18 +15,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("/posts/write")
-    @ResponseBody
-    public String write() {
+    private String getWriteFormHtml() {
+        return getWriteFormHtml("");
+    }
+
+    private String getWriteFormHtml(String errorMessage) {
         return """
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%">
+                <div style="display: flex; flex-direction: column; row-gap: 4px; align-items: center; justify-content: center; height: 100%%">
+                    <div style="color: #ff0000">%s</div>
                     <form action="doWrite" method="POST" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
                         <input type="text" name="title" placeholder="제목" style="height: 24px" />
                         <textarea name="content" placeholder="내용" style="height: 96px; resize: none;" ></textarea>
                         <input type="submit" value="작성" style="height: 24px" />
                     </form>
                 </div>
-                """;
+                """.formatted(errorMessage);
+    }
+
+    @GetMapping("/posts/write")
+    @ResponseBody
+    public String write() {
+        return getWriteFormHtml();
     }
 
     @PostMapping("/posts/doWrite")
@@ -36,26 +45,8 @@ public class PostController {
             @RequestParam(defaultValue = "") String title,
             @RequestParam(defaultValue = "") String content
     ) {
-        if (title.isBlank()) return """
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%">
-                    <form action="doWrite" method="POST" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
-                        <div style="color: #ff0000">제목을 입력해 주세요.</div>
-                        <input type="text" name="title" placeholder="제목" style="height: 24px" />
-                        <textarea name="content" placeholder="내용" style="height: 96px; resize: none;" ></textarea>
-                        <input type="submit" value="작성" style="height: 24px" />
-                    </form>
-                </div>
-                """;
-        if (content.isBlank()) return """
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%">
-                    <form action="doWrite" method="POST" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
-                        <input type="text" name="title" placeholder="제목" style="height: 24px" />
-                        <div style="color: #ff0000">내용을 입력해 주세요.</div>
-                        <textarea name="content" placeholder="내용" style="height: 96px; resize: none;" ></textarea>
-                        <input type="submit" value="작성" style="height: 24px" />
-                    </form>
-                </div>
-                """;
+        if (title.isBlank()) return getWriteFormHtml("제목을 입력해 주세요.");
+        if (content.isBlank()) return getWriteFormHtml("내용을 입력해 주세요.");
 
         Post post = postService.write(title, content);
 
