@@ -11,7 +11,7 @@ public class PostController {
     public String write() {
         return """
                 <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                    <form action="http://localhost:8080/posts/doWrite" method="POST">
+                    <form action="/posts/doWrite" method="POST">
                         <input type="text" name="title" placeholder="제목" />
                         <br />
                         <textarea name="content" placeholder="내용"></textarea>
