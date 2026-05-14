@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -19,7 +20,7 @@ public class PostController {
     public String write() {
         return """
                 <div style="display: flex; align-items: center; justify-content: center; height: 100%">
-                    <form action="doWrite" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
+                    <form action="doWrite" method="POST" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
                         <input type="text" name="title" placeholder="제목" style="height: 24px" />
                         <textarea name="content" placeholder="내용" style="height: 96px; resize: none;" ></textarea>
                         <input type="submit" value="작성" style="height: 24px" />
@@ -28,7 +29,7 @@ public class PostController {
                 """;
     }
 
-    @GetMapping("/posts/doWrite")
+    @PostMapping("/posts/doWrite")
     @ResponseBody
     @Transactional
     public String write(
