@@ -29,7 +29,9 @@ public class PostController {
     private String getWriteFormHtml(String errorFieldName, String errorMessage, String title, String content) {
         return """
                 <div style="display: flex; flex-direction: column; row-gap: 4px; align-items: center; justify-content: center; height: 100%%">
-                    <div style="color: #ff0000">%s</div>
+                    <ul style="color: #ff0000">
+                        %s
+                    </ul>
                     <form action="doWrite" method="POST" style="display: flex; flex-direction: column; row-gap: 4px; width: 300px; padding: 4px; background-color: #abe8d7">
                         <input type="text" name="title" placeholder="제목" value="%s" style="height: 24px" />
                         <textarea name="content" placeholder="내용" style="height: 96px; resize: none;">%s</textarea>
@@ -79,7 +81,13 @@ public class PostController {
         if (bindingResult.hasErrors()) {
             String errorFieldName = "title";
             String errorMessage = bindingResult.getFieldErrors().stream()
-                    .map((fieldError) -> fieldError.getField() + "-" + fieldError.getDefaultMessage())
+                    .map((fieldError) ->
+                            (fieldError.getField() + "-" + fieldError.getDefaultMessage()).split("-", 3)
+                    )
+                    .map((field) ->
+                            "<!--%s--><li data-error-field-name=\"%s\">%s</li>".formatted(field[1], field[0], field[2])
+                    )
+                    .sorted()
                     .collect(Collectors.joining("<br>"));
             return getWriteFormHtml(errorFieldName, errorMessage, form.getTitle(), form.getContent());
         }
