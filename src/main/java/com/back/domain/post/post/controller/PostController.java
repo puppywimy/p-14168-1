@@ -23,10 +23,10 @@ public class PostController {
     private final PostService postService;
 
     private String getWriteFormHtml() {
-        return getWriteFormHtml("", "", "", "");
+        return getWriteFormHtml("", "", "");
     }
 
-    private String getWriteFormHtml(String errorFieldName, String errorMessage, String title, String content) {
+    private String getWriteFormHtml(String errorMessage, String title, String content) {
         return """
                 <div style="display: flex; flex-direction: column; row-gap: 4px; align-items: center; justify-content: center; height: 100%%">
                     <ul style="color: #ff0000">
@@ -39,19 +39,16 @@ public class PostController {
                     </form>
                 </div>
                 <script>
-                const errorFieldName = '%s';
+                // 현재까지 나온 모든 폼 검색
+                const forms = document.querySelectorAll('form');
+                // 그 중에서 가장 마지막 폼 1개 찾기
+                const lastForm = forms[forms.length - 1];
                 
-                if ( errorFieldName.length > 0 )
-                {
-                    // 현재까지 나온 모든 폼 검색
-                    const forms = document.querySelectorAll('form');
-                    // 그 중에서 가장 마지막 폼 1개 찾기
-                    const lastForm = forms[forms.length - 1];
+                const errorFieldName = lastForm.previousElementSibling.querySelector('li')?.dataset.errorFieldName ?? '';
                 
-                    lastForm[errorFieldName].focus();
-                }
+                if (errorFieldName.length > 0) lastForm[errorFieldName].focus();
                 </script>
-                """.formatted(errorMessage, title, content, errorFieldName);
+                """.formatted(errorMessage, title, content);
     }
 
     @GetMapping("/posts/write")
@@ -79,7 +76,6 @@ public class PostController {
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            String errorFieldName = "title";
             String errorMessage = bindingResult.getFieldErrors().stream()
                     .map((fieldError) ->
                             (fieldError.getField() + "-" + fieldError.getDefaultMessage()).split("-", 3)
@@ -89,7 +85,7 @@ public class PostController {
                     )
                     .sorted()
                     .collect(Collectors.joining("<br>"));
-            return getWriteFormHtml(errorFieldName, errorMessage, form.getTitle(), form.getContent());
+            return getWriteFormHtml(errorMessage, form.getTitle(), form.getContent());
         }
 
         Post post = postService.write(form.getTitle(), form.getContent());
